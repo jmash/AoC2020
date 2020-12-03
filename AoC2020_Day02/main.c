@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct
 {
@@ -14,7 +15,6 @@ void resetPasswordCheck(check_password_t * checkLine)
     checkLine->min = 0;
     checkLine->max = 0;
     checkLine->checkChar = 'a';
-    checkLine->password = "abc";
 }
 
 int main()
@@ -24,6 +24,10 @@ int main()
     check_password_t checkLine;
     check_password_t * checkLinePtr = &checkLine;
     int passwordCharCount = 0;
+
+    checkLine.password = malloc(4*sizeof(char));
+    strcpy(checkLine.password, "abc");
+    printf("%s\n", checkLine.password);
 
     resetPasswordCheck(checkLinePtr);
 
@@ -38,7 +42,7 @@ int main()
         }
 
 
-        printf("%c", currCh);
+        fscanf(input, "%d-%d %c: ", &checkLine.min, &checkLine.max, &checkLine.checkChar);
         currCh = fgetc(input);
     }
 
