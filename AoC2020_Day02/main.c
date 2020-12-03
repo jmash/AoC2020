@@ -7,9 +7,9 @@ typedef struct
     int max;
     char checkChar;
     char * password;
-} password_check_t;
+} check_password_t;
 
-void resetPasswordCheck(password_check_t * checkLine)
+void resetPasswordCheck(check_password_t * checkLine)
 {
     checkLine->min = 0;
     checkLine->max = 0;
@@ -19,13 +19,11 @@ void resetPasswordCheck(password_check_t * checkLine)
 
 int main()
 {
-    FILE input = fopen("./testinput.txt", "r");
-    char currCh;
-    currCh = fgetc(input);
+    FILE * input = fopen("./testinput.txt", "r");
+    char currCh = fgetc(input);
     check_password_t checkLine;
-    check_password_t * checkLinePtr = checkLine;
+    check_password_t * checkLinePtr = &checkLine;
     int passwordCharCount = 0;
-
 
     resetPasswordCheck(checkLinePtr);
 
@@ -36,7 +34,10 @@ int main()
         if(currCh == '\n')
         {
             passwordCharCount = 0;
+            resetPasswordCheck(checkLinePtr);
         }
+
+
         printf("%c", currCh);
         currCh = fgetc(input);
     }
