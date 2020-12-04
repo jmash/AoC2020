@@ -2,6 +2,12 @@
 
 int main(int argc, const char *argv[])
 {
-  printf("Hello World\n");
-  return 0;
+    FILE * input = fopen("./testinput.txt", "r");
+    char currCh;
+
+    while((currCh = fgetc(input)) != EOF)
+    {
+        printf("%c");
+    }
+    return 0;
 }
