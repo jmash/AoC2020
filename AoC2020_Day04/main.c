@@ -34,12 +34,56 @@ int numValid(const char * str, int min_v, int max_v)
     return(strlen(str) == 4) && (atoi(str) >= min_v) && (atoi(str) <= max_v);
 }
 
-int heightValid(const char * str)
+int hclValid(const char * str)
+{
+    const char * strPtr = str;
+    if(strlen(str) != 7) return false;
+    if(*(strPtr) != '#') return false;
+    strPtr++;
+    while(*(strPtr) != '\0')
+    {
+        if(!(((*(strPtr) >= 48) && (*(strPtr) <= 57)) || ((*(strPtr) >= 97) && (*(strPtr) <= 122))))
+        {
+            return false;
+        }
+        strPtr++;
+    }
+    return true;
+}
+
+int eclValid(const char * str)
+{
+    if(strcmp(str, "amb")) return true;
+    if(strcmp(str, "blu")) return true;
+    if(strcmp(str, "brn")) return true;
+    if(strcmp(str, "gry")) return true;
+    if(strcmp(str, "grn")) return true;
+    if(strcmp(str, "hzl")) return true;
+    if(strcmp(str, "oth")) return true;
+    return false;
+}
+
+int pidValid(const char * str)
+{
+    const char * strPtr = str;
+
+    if(strlen(str) != 9) return false;
+    while(*(strPtr) != '\0')
+    {
+        if(!isdigit(*(strPtr))) return false;
+        strPtr++;
+    }
+
+    return true;
+}
+
+int hgtValid(const char * str)
 {
     char suffix[3];
     char amount[4];
     char * suffixPtr;
-    char * amountPtr = str;
+    const char * amountPtr = str;
+    int amountPtrPos = 0;
 
     if((strstr(str, "cm")) != NULL)
     {
@@ -57,21 +101,59 @@ int heightValid(const char * str)
         suffix[2] = '\0';
     }
 
-    while()
-
-    
-    printf("%s\n", suffix);
+    if(((strstr(str, "cm")) != NULL) || ((strstr(str, "in")) != NULL))
+    {
+    while(amountPtr != suffixPtr)
+        {
+            amount[amountPtrPos] = *(amountPtr);  
+            amountPtr++;
+            amountPtrPos++;
+        }
+    }
+    amount[amountPtrPos] = '\0';
+    if(strcmp(suffix, "cm"))
+    {
+        if((atoi(amount) >= 150) && (atoi(amount) <= 193)) 
+        {
+            printf("Returning true\n");
+            return true;
+        } 
+    }
+   
+    if(strcmp(suffix, "in"))
+    {
+        if((atoi(amount) >= 59) && (atoi(amount) <= 76))
+        {
+            printf("Returning true\n");
+            return true;
+        } 
+    }
+    return false;
 }
 
 int validPassport(const passport_t * passports)
 {
-    if(!(strlen(passports->ecl.value) && strlen(passports->pid.value) && strlen(passports->eyr.value) && strlen(passports->hcl.value) && strlen(passports->byr.value) && strlen(passports->iyr.value) && strlen(passports->hgt.value))) return false;
-    heightValid(passports->hgt.value); 
+    printf("[\nhcl: %d\nhgt: %d\npid: %d\neyr %d\nbyr %d\niyr %d\necl %d\n]\n", hclValid(passports->hcl.value),  hgtValid(passports->hgt.value), pidValid(passports->pid.value), numValid(passports->eyr.value, 2020, 2030), numValid(passports->byr.value, 1920, 2002), numValid(passports->iyr.value, 2010, 2020), eclValid(passports->ecl.value));
+    if(!(strlen(passports->ecl.value) 
+        && strlen(passports->pid.value) 
+        && strlen(passports->eyr.value) 
+        && strlen(passports->hcl.value) 
+        && strlen(passports->byr.value) 
+        && strlen(passports->iyr.value) 
+        && strlen(passports->hgt.value))) return false;
+    if(hclValid(passports->hcl.value) 
+        && hgtValid(passports->hgt.value) 
+        && pidValid(passports->pid.value) 
+        && numValid(passports->eyr.value, 2020, 2030) 
+        && numValid(passports->byr.value, 1920, 2002) 
+        && numValid(passports->iyr.value, 2010, 2020) 
+        && eclValid(passports->ecl.value)) 
+            return true;
 }
 
 int main(int argc, const char *argv[])
 {
-    FILE * input = fopen("./input.txt", "r");
+    FILE * input = fopen("./testinput.txt", "r");
     char currCh;
     char readKey[4];
     char readValue[20];
@@ -122,7 +204,7 @@ int main(int argc, const char *argv[])
             if(strcmp(readKey, "hgt") == 0)
                 strcpy(passports[passportInx].hgt.value, readValue);
  
-            printf("(%s: %s)\n", readKey, readValue); 
+            //printf("(%s: %s)\n", readKey, readValue); 
         }
         
         if(peek(input) == '\n')
