@@ -53,13 +53,13 @@ int hclValid(const char * str)
 
 int eclValid(const char * str)
 {
-    if(strcmp(str, "amb")) return true;
-    if(strcmp(str, "blu")) return true;
-    if(strcmp(str, "brn")) return true;
-    if(strcmp(str, "gry")) return true;
-    if(strcmp(str, "grn")) return true;
-    if(strcmp(str, "hzl")) return true;
-    if(strcmp(str, "oth")) return true;
+    if(strcmp(str, "amb") == 0) return true;
+    if(strcmp(str, "blu") == 0) return true;
+    if(strcmp(str, "brn") == 0) return true;
+    if(strcmp(str, "gry") == 0) return true;
+    if(strcmp(str, "grn") == 0) return true;
+    if(strcmp(str, "hzl") == 0) return true;
+    if(strcmp(str, "oth") == 0) return true;
     return false;
 }
 
@@ -85,25 +85,23 @@ int hgtValid(const char * str)
     const char * amountPtr = str;
     int amountPtrPos = 0;
 
-    if((strstr(str, "cm")) != NULL)
+    if(((strstr(str, "cm")) != NULL))
     {
         suffixPtr = strstr(str, "cm");
-        suffix[0] = *(suffixPtr);
-        suffix[1] = *(suffixPtr+1);
-        suffix[2] = '\0';
     }
 
     if((strstr(str, "in")) != NULL)
     {
         suffixPtr = strstr(str, "in");
-        suffix[0] = *(suffixPtr);
-        suffix[1] = *(suffixPtr+1);
-        suffix[2] = '\0';
     }
 
     if(((strstr(str, "cm")) != NULL) || ((strstr(str, "in")) != NULL))
     {
-    while(amountPtr != suffixPtr)
+        suffix[0] = *(suffixPtr);
+        suffix[1] = *(suffixPtr+1);
+        suffix[2] = '\0';
+
+        while(amountPtr != suffixPtr)
         {
             amount[amountPtrPos] = *(amountPtr);  
             amountPtr++;
@@ -111,20 +109,20 @@ int hgtValid(const char * str)
         }
     }
     amount[amountPtrPos] = '\0';
-    if(strcmp(suffix, "cm"))
+
+    int amountInt = atoi(amount);
+    if(strcmp(suffix, "cm") == 0)
     {
-        if((atoi(amount) >= 150) && (atoi(amount) <= 193)) 
+        if((amountInt >= 150) && (amountInt <= 193))
         {
-            printf("Returning true\n");
             return true;
         } 
     }
    
-    if(strcmp(suffix, "in"))
+    if(strcmp(suffix, "in") == 0)
     {
-        if((atoi(amount) >= 59) && (atoi(amount) <= 76))
+        if((amountInt >= 59) && (amountInt <= 76))
         {
-            printf("Returning true\n");
             return true;
         } 
     }
@@ -153,7 +151,7 @@ int validPassport(const passport_t * passports)
 
 int main(int argc, const char *argv[])
 {
-    FILE * input = fopen("./testinput.txt", "r");
+    FILE * input = fopen("./input.txt", "r");
     char currCh;
     char readKey[4];
     char readValue[20];
