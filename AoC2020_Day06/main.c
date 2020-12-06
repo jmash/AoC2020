@@ -58,15 +58,48 @@ void printArray(bool arr[], int n)
     }
 }
 
+char peek(FILE * fp)
+{
+    char ch;
+    ch = fgetc(fp);
+    ungetc(ch, fp);
+    return ch;
+}
+
 // anticipated testinput output 11
 int main(int argc, const char *argv[])
 {
-    FILE * input = fopen("./testinput.txt", "r");
+    FILE * input = fopen("./input.txt", "r");
+    char currCh; // friend! <3
     bool groupAnswers[MAX_ALPHA];
+    int totalSum = 0;
+    int groupSum = 0;
     memset(groupAnswers, 0, MAX_ALPHA*sizeof(bool));
 
-    printArray(groupAnswers, MAX_ALPHA);
+    while((currCh = fgetc(input)) != EOF)
+    {
+        if(currCh == '\n')
+        {
+            if((peek(input) == '\n') || (peek(input) == EOF)) // sum and reset
+            {
+                for(int i = 0; i < MAX_ALPHA; i++)
+                {
+                    if(groupAnswers[i]) groupSum++;
+                }
+                totalSum += groupSum;
+                groupSum = 0;
+                memset(groupAnswers, 0, MAX_ALPHA*sizeof(bool));
+            }
+        }
+        if(groupAnswers[currCh - 97] == false)
+        {
+            groupAnswers[currCh - 97] = true;
+        }
+        //printArray(groupAnswers, MAX_ALPHA);
+        //printf("\n");
+    }
 
+    printf("total sum is %d\n", totalSum);
 
 
     return 0;
