@@ -37,6 +37,11 @@ int getMax(int a, int b)
     return a*(a >= b) + b*(a < b);
 }
 
+int cmpfunc (const void * a, const void * b) 
+{
+   return ( *(int*)a - *(int*)b );
+}
+
 
 int main(int argc, const char *argv[])
 {
@@ -50,7 +55,6 @@ int main(int argc, const char *argv[])
     while((currCh = fgetc(input)) != EOF)
         if(currCh == '\n') seatIdsNum++;
 
-    printf("%d\n", seatIdsNum);
     int seatIds[seatIdsNum];
 
     fseek(input, 0, SEEK_SET);
@@ -59,7 +63,6 @@ int main(int argc, const char *argv[])
     {
         if(currCh == '\n') {
             seatIds[seatInx] = seatId;
-            printf("%d\n", seatIds[seatInx]);
             seatInx++; 
             continue;
         }
@@ -98,8 +101,16 @@ int main(int argc, const char *argv[])
         maxSeatId = getMax(seatId, maxSeatId);
     }
 
-    printf("%d\n", maxSeatId);
-    printf("IS MAIN 2 YA PUTZ\n");
+    qsort(seatIds, seatIdsNum, sizeof(int), cmpfunc);
+
+    for(int i = 0; i < seatIdsNum; i++)
+    {
+        if(seatIds[i]+1 != seatIds[i+1])
+        {
+            printf("My seat id is: %d\n", seatIds[i]+1);
+            break;
+        }
+    }
     
     return 0;
 }
