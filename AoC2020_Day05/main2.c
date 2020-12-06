@@ -44,10 +44,23 @@ int main(int argc, const char *argv[])
     char currCh;
     int seatId = 0;
     int maxSeatId = 0;
+    int seatIdsNum = 0;
+    int seatInx = 0;
+
+    while((currCh = fgetc(input)) != EOF)
+        if(currCh == '\n') seatIdsNum++;
+
+    printf("%d\n", seatIdsNum);
+    int seatIds[seatIdsNum];
+
+    fseek(input, 0, SEEK_SET);
 
     while((currCh = fgetc(input)) != EOF)
     {
         if(currCh == '\n') {
+            seatIds[seatInx] = seatId;
+            printf("%d\n", seatIds[seatInx]);
+            seatInx++; 
             continue;
         }
         int currCol = 0;
@@ -86,6 +99,7 @@ int main(int argc, const char *argv[])
     }
 
     printf("%d\n", maxSeatId);
+    printf("IS MAIN 2 YA PUTZ\n");
     
     return 0;
 }
