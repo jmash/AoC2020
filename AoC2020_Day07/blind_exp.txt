@@ -1,0 +1,45 @@
+there is a circle that has a 5 in it
+and an arrow that points to a circle with 11 in it,
+and 11 has arrows that points to 2,
+and to 9,
+and to 10.
+There is also a circle with 7 that points to 8,
+and that circle with 8 points to 9.
+There is also a circle that has a 3,
+and has an arrow that points to the 8 circle,
+and an arrow that points to the 10 circle.
+
+A: {B}
+B: {C D E}
+F: {G}
+G: {D}
+H: {G E}
+
+   A B C D E F G H
+A: 0 1 0 0 0 0 0 0
+B: 0 0 1 1 1 0 0 0
+C: 0 0 0 0 0 0 0 0
+D: 0 0 0 0 0 0 0 0
+E: 0 0 0 0 0 0 0 0
+F: 0 0 0 0 0 0 1 0
+G: 0 0 0 1 0 0 0 0
+H: 0 0 0 0 1 0 1 0
+
+
+
+A:  B C D E F G H
+B:  A C D E F G H
+C:  A B D E F G H
+D:  A B C E F G H
+E:  A B C D F G H
+F:  A B C D E G H
+G:  A B C D E F H
+H:  A B C D E F G
+
+1 0 0 0 0 1 0 1
+
+[0][1][2][3][4]
+[0][1][2][3][4]
+[0][1][2][3][4]
+[0][1][2][3][4]
+[0][1][2][3][4]

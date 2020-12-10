@@ -1,38 +1,85 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-/*
+#define nl printf("\n")
 
-[0] light red bags contain 1 [2] bright white bag, 2 [3] muted yellow bags.
-[1] dark orange bags contain 3 [2] bright white bags, [3] 4 muted yellow bags.
-[2] bright white bags contain 1 [4] shiny gold bag.
-[3] muted yellow bags contain 2 [4] shiny gold bags, 9 [7] faded blue bags.
------
-[4] shiny gold bags contain 1 [5] dark olive bag, 2 [6] vibrant plum bags.
-[5] dark olive bags contain 3 [7] faded blue bags, 4 [8] dotted black bags.
-[6] vibrant plum bags contain 5 [7] faded blue bags, 6 [8] dotted black bags.
-[7] faded blue bags contain no other bags.
-[8] dotted black bags contain no other bags.
+typedef struct
+{
+    int label;
+    bool visited;
+} vertex_t;
 
-(0)
-size: 1 1 1 1 1 1 1 1 1
-      0 1 2 3 4 5 6 7 8
-inx:  0 1 2 3 4 5 6 7 8
-      0 1 2 3 4 5 6 7 8
+int top = -1;
 
-union(2, 1)
+void push(int item)
+{
+    stack[++top] = item;
+}
+
+int pop()
+{
+    return stack[top--];
+}
+
+int peek()
+{
+    return stack[top];
+}
+
+bool isStackEmpty()
+{
+    return top == -1;
+}
+
+void addEdge(int adjMatrix[][], int start, int end)
+{
+    adjMatrix[start][end] = 1;
+    adjMatrix[end][start] = 1;
+}
+
+int nlCount(FILE * input)
+{
+    char currCh;
+    int nlCount = 0;
+
+    while((currCh = fgetc(input)) != EOF)
+    {
+        if(currCh == '\n') nlCount++;
+    }
+
+    return nlCount;
+}
+
+void labelVertices(FILE * input, vertex_t vertexList[], int length)
+{
+    for(int i = 0; i < length; i++)
+    {
+        vertexList[i].label = i;
+    }
+}
 
 
-
-size: 1 1 1 1 1 1 1 1 1
-      0 1 2 3 4 5 6 7 8
-inx:  0 1 2 3 4 5 6 7 8
-      0 1 2 3 4 5 6 7 8
-
-*/
+void printVertexList(vertex_t vertexList[], int length)
+{
+    for(int i = 0; i < length; i++)
+    {
+        printf("%d\n", vertexList[i].label);
+    }
+}
 
 int main(int argc, const char *argv[])
 {
-    printf("Hello World\n");
+    FILE * input = fopen("./testinput.txt", "r"); 
+    char currCh; // friend :)
+    int vertexCount = nlCount(input);
+    int adjMatrix[vertexCount][vertexCount];
+    int stack[vertexCount];
+    vertex_t vertexList[vertexCount];
+    
+    labelVertices(input, vertexList, vertexCount);
+    printVertexList(vertexList, vertexCount);
+    
+    nl;
     return 0;
 }
