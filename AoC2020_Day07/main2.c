@@ -90,7 +90,7 @@ void printVertexList(vertex_t vertexList[], int length)
     {
         int vertexVal = vertexList[i].label.vertexVal;
         char * desc = vertexList[i].label.desc;
-        printf("%d: %s\n", vertexVal, desc);
+        //printf("%d: %s\n", vertexVal, desc);
     }
 }
 
@@ -115,6 +115,22 @@ void convertToDesc(char * dest, char * word1, char * word2)
  *    ^
 */
 
+void printNumBags(int length, vertex_t vertexList[])
+{
+    for(int i = 0; i < length; i++)
+    {
+        printf("%d\n", vertexList[i].numBags);
+    }
+}
+
+void initializeNumBags(int length, vertex_t vertexList[])
+{
+    for(int i = 0; i < length; i++)
+    {
+        vertexList[i].numBags = 0;
+    }
+}
+
 void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjMatrix[][length])
 {
     char heldFirstWord[50];
@@ -125,6 +141,7 @@ void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjM
     char heldCompDesc[50];
     int heldInx = 0;
     int compInx = 0;
+    char numBagsCh[10];
     char currCh = '\n'; // welcome back
 
     for(int i = 0; i < length; i++)
@@ -133,18 +150,19 @@ void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjM
         convertToDesc(heldFullDesc, heldFirstWord, heldSecondWord); 
         heldInx = getVertexId(heldFullDesc, vertexList, length);
 
-        while(fscanf(input, " %d %s %s bag%*[,|s,|.]", &vertexList[i].numBags, compFirstWord, compSecondWord) == 3)
+        while(fscanf(input, " %[no0123456789] %s %s bag%*[,|s,|.]", numBagsCh, compFirstWord, compSecondWord) == 3)
         {
             convertToDesc(heldCompDesc, compFirstWord, compSecondWord); 
             compInx = getVertexId(heldCompDesc, vertexList, length);
-            if(compInx < 0) break;
-            if(strcmp(compFirstWord, "other bags.") == 0) break;
-            printf("%s\n", compFirstWord);
+            if((compInx < 0) || (strcmp(compFirstWord, "other bags.") == 0)) 
+                break;
+            vertexList[compInx].numBags = atoi(numBagsCh);
             addEdge(length, adjMatrix, heldInx, compInx);
         }
-        // reset
     }
+    printNumBags(length, vertexList);
 }
+
 
 void printMatrix(int length, int adjMatrix[][length])
 {
@@ -171,11 +189,8 @@ void depthFirstSearch(int length, int adjMatrix[][length], int vertexIndex, vert
     if(vertexIndex == target) 
     {
         vertexList[vertexIndex].foundtarget = true;
-        printf("Target ho!\n");
     }
 
-
-    printf("%d: %s\n", vertexList[vertexIndex].label.vertexVal, vertexList[vertexIndex].label.desc);
     for(int w = 0; w < length; w++)
     {
         if(adjMatrix[vertexIndex][w] && !vertexList[w].visited)
@@ -192,7 +207,7 @@ void depthFirstSearch(int length, int adjMatrix[][length], int vertexIndex, vert
 
 int main(int argc, const char *argv[])
 {
-    FILE * input = fopen("./input.txt", "r"); 
+    FILE * input = fopen("./testinput.txt", "r"); 
     int vertexCount = nlCount(input);
     int adjMatrix[vertexCount][vertexCount];
     int stack[vertexCount];
@@ -202,20 +217,20 @@ int main(int argc, const char *argv[])
     readLabels(input, vertexList, vertexCount);
     qsort(vertexList, vertexCount, sizeof(vertex_t), cmp_vertex_t);
     memset(adjMatrix, 0, sizeof(int)*vertexCount*vertexCount);
+    initializeNumBags(vertexCount, vertexList);
     populateAdjMatrix(input, vertexCount, vertexList, adjMatrix);
-    printMatrix(vertexCount, adjMatrix);
+    //printMatrix(vertexCount, adjMatrix);
     // for test this returns 7
     int shinyTarget = getVertexId("shiny gold", vertexList, vertexCount);
-    printf("target: %d\n", shinyTarget);
     for(int i = 0; i < vertexCount; i++)
     {
         labelVertices(input, vertexList, vertexCount);
-        printf("Found target: %d\n", vertexList[i].foundtarget);
+        //printf("Found target: %d\n", vertexList[i].foundtarget);
         depthFirstSearch(vertexCount, adjMatrix, i, vertexList, shinyTarget);
         solCount += vertexList[i].foundtarget ? 1 : 0;
-        nl;
+        //nl;
     }
-    printf("Solution: %d\n", --solCount);
+    //printf("Solution: %d\n", --solCount);
     nl;
     return 0;
 }
