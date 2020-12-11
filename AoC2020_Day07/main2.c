@@ -17,6 +17,7 @@ typedef struct
     label_t label;
     bool visited;
     bool foundtarget;
+    int numBags;
 } vertex_t;
 
 void rewindFile(FILE * input)
@@ -132,7 +133,7 @@ void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjM
         convertToDesc(heldFullDesc, heldFirstWord, heldSecondWord); 
         heldInx = getVertexId(heldFullDesc, vertexList, length);
 
-        while(fscanf(input, " %*[no0123456789] %s %s bag%*[,|s,|.]", compFirstWord, compSecondWord) == 2)
+        while(fscanf(input, " %d %s %s bag%*[,|s,|.]", &vertexList[i].numBags, compFirstWord, compSecondWord) == 3)
         {
             convertToDesc(heldCompDesc, compFirstWord, compSecondWord); 
             compInx = getVertexId(heldCompDesc, vertexList, length);
