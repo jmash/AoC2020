@@ -25,9 +25,9 @@ void rewindFile(FILE * input)
     fseek(input, 0, SEEK_SET);
 }
 
-void addEdge(int length, int adjMatrix[][length], int start, int end)
+void addEdge(int length, int adjMatrix[][length], int start, int end, int weight)
 {
-    adjMatrix[start][end] = 1;
+    adjMatrix[start][end] = weight;
     //adjMatrix[end][start] = 1;
 }
 
@@ -141,6 +141,7 @@ void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjM
     char heldCompDesc[50];
     int heldInx = 0;
     int compInx = 0;
+    int weight = 0;
     char numBagsCh[10];
     char currCh = '\n'; // welcome back
 
@@ -156,11 +157,10 @@ void populateAdjMatrix(FILE * input, int length, vertex_t vertexList[], int adjM
             compInx = getVertexId(heldCompDesc, vertexList, length);
             if((compInx < 0) || (strcmp(compFirstWord, "other bags.") == 0)) 
                 break;
-            vertexList[compInx].numBags = atoi(numBagsCh);
-            addEdge(length, adjMatrix, heldInx, compInx);
+            weight = atoi(numBagsCh);
+            addEdge(length, adjMatrix, heldInx, compInx, weight);
         }
     }
-    printNumBags(length, vertexList);
 }
 
 
@@ -183,54 +183,47 @@ void printMatrix(int length, int adjMatrix[][length])
             recursively call DFS(G, w)
 */
 
-void depthFirstSearch(int length, int adjMatrix[][length], int vertexIndex, vertex_t vertexList[], int target) 
+int depthFirstSearch(int length, int adjMatrix[][length], int vertexIndex, vertex_t vertexList[], int * solCountPtr) 
 {
     vertexList[vertexIndex].visited = true;
-    if(vertexIndex == target) 
-    {
-        vertexList[vertexIndex].foundtarget = true;
-    }
+    vertexList[vertexIndex].numBags = 1;
 
     for(int w = 0; w < length; w++)
     {
-        if(adjMatrix[vertexIndex][w] && !vertexList[w].visited)
+        if(adjMatrix[vertexIndex][w])
         {
-            if(w == target) vertexList[vertexIndex].foundtarget=true;
-            depthFirstSearch(length, adjMatrix, w, vertexList, target);
-            if(vertexList[w].foundtarget)
+            //printf("Thinking about %s\n", vertexList[w].label.desc);
+            if(!vertexList[w].visited)
             {
-                vertexList[vertexIndex].foundtarget = true;
+                //printf("Visiting: %s\n", vertexList[w].label.desc);
+                depthFirstSearch(length, adjMatrix, w, vertexList, solCountPtr);
             }
+            vertexList[vertexIndex].numBags += adjMatrix[vertexIndex][w]*vertexList[w].numBags;
         }
     }
+    return vertexList[vertexIndex].numBags;
 }
 
 int main(int argc, const char *argv[])
 {
-    FILE * input = fopen("./testinput.txt", "r"); 
+    FILE * input = fopen("./input.txt", "r"); 
     int vertexCount = nlCount(input);
     int adjMatrix[vertexCount][vertexCount];
     int stack[vertexCount];
-    int solCount = 0;
+    int solCount = 1;
+    int * solCountPtr = &solCount;
     vertex_t vertexList[vertexCount];
     
     readLabels(input, vertexList, vertexCount);
     qsort(vertexList, vertexCount, sizeof(vertex_t), cmp_vertex_t);
     memset(adjMatrix, 0, sizeof(int)*vertexCount*vertexCount);
     initializeNumBags(vertexCount, vertexList);
+    labelVertices(input, vertexList, vertexCount);
     populateAdjMatrix(input, vertexCount, vertexList, adjMatrix);
     //printMatrix(vertexCount, adjMatrix);
     // for test this returns 7
-    int shinyTarget = getVertexId("shiny gold", vertexList, vertexCount);
-    for(int i = 0; i < vertexCount; i++)
-    {
-        labelVertices(input, vertexList, vertexCount);
-        //printf("Found target: %d\n", vertexList[i].foundtarget);
-        depthFirstSearch(vertexCount, adjMatrix, i, vertexList, shinyTarget);
-        solCount += vertexList[i].foundtarget ? 1 : 0;
-        //nl;
-    }
-    //printf("Solution: %d\n", --solCount);
+    int shinyVertex = getVertexId("shiny gold", vertexList, vertexCount);
+    printf("%d\n", depthFirstSearch(vertexCount, adjMatrix, shinyVertex, vertexList, solCountPtr)-1);
     nl;
     return 0;
 }
