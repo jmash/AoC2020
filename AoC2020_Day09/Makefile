@@ -9,3 +9,7 @@ solution: main
 	./main 25 ./input.txt
 main2: main2.o
 	cc main2.o -o main2
+test2: main2
+	./main2 5 ./testinput.txt
+solution2: main2
+	./main2 25 ./input.txt

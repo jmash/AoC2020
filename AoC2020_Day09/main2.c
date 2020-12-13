@@ -1,35 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #define nl printf("\n")
-
-/*
-   [35   35   35
-    20  [20   20
-    15   15  [15
-    25   25   25
-    47]  47   47
-    (40) 40]  40
-    62   (62) 62]
-    55   ...  (55)
-    65        ...
-    95
-    102
-    117
-    150
-    182
-    127
-    219
-    299
-    277
-    309
-    576 
-*/
 
 void rewindFile(FILE * input)
 {
     fseek(input, 0, SEEK_SET);
+}
+
+long long unsigned int min(long long unsigned int a, long long unsigned int b)
+{
+    return a*(a < b) + b*(a >= b);
+}
+
+
+long long unsigned int max(long long unsigned int a, long long unsigned int b)
+{
+    return a*(a >= b) + b*(a < b);
 }
 
 int readLines(FILE * input)
@@ -74,13 +63,17 @@ int main(int argc, const char *argv[])
     int fileLines = readLines(input); 
     int preambleLength = atoi(argv[1]);
     long long unsigned int numbers[fileLines];
+    long long unsigned int answer;
+    long long unsigned int compare;
+    long long unsigned int compareMin = INT_MAX;
+    long long unsigned int compareMax;
     int matchFlag = false;
     int i = 0, j = 1, k = 2;
 
     // Grab all numbers from file and place them into numbers array
     populateNumbers(input, numbers, fileLines);
     // show the numbers array
-    //printArray(numbers, fileLines);
+    // printArray(numbers, fileLines);
     
     for(i = 0; i < fileLines - preambleLength; i++)
     {
@@ -98,6 +91,31 @@ int main(int argc, const char *argv[])
         if(!matchFlag) break;
     }
 
-    printf("%lld\n", numbers[i+preambleLength]);
+    answer = numbers[i+preambleLength];
+    matchFlag = false;
+
+    for(i = 0; i < fileLines; i++)
+    {
+        if(matchFlag) break;
+        compare = 0;     
+        compareMin = ULLONG_MAX;
+        compareMax = 0;
+        for(j = i; j < fileLines; j++)
+        {
+            compare += numbers[j];
+            if(compare == answer) 
+            {    
+                matchFlag = true;
+                //printf("Answer is %d\n", numbers[i] + numbers[j]);
+                for(k = i; k <= j; k++)
+                {
+                    compareMin = min(compareMin, numbers[k]);
+                    compareMax = max(compareMax, numbers[k]);
+                }
+                printf("The answer is: %lld\n", compareMin + compareMax);
+            }                
+        }
+    }
+
     return 0;
 }
