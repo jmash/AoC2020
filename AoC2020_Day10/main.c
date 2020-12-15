@@ -73,7 +73,6 @@ int main(int argc, const char *argv[])
         return 1;
     }
     int fileLines = countLines(input);
-    //printf("%d\n", fileLines);
     int joltages[fileLines + 2];
     joltages[fileLines] = 0;
     populateJoltages(input, joltages, fileLines);
@@ -84,7 +83,7 @@ int main(int argc, const char *argv[])
 
     qsort(joltages, fileLines + 2, sizeof(int), cmpfunc);
 
-    for(int i = 0; i < fileLines+2; i++)
+    for(int i = 0; i <= fileLines+2; i++)
     {
         for(int j = 1; j <= 3; j++)
         {

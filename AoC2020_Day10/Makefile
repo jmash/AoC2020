@@ -4,7 +4,7 @@ main: main.o
 clean: 
 	rm *.o main
 test: main 
-	./main ./testinput2.txt
+	./main ./testinput.txt
 solution: main 
 	./main ./input.txt
 main2: main2.o
@@ -13,3 +13,5 @@ test2: main2
 	./main2 ./testinput.txt
 solution2: main2
 	./main2 ./input.txt
+debug: main2
+	~/Downloads/gdbgui_0.14.0.1 ./main2
