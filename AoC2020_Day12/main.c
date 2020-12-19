@@ -29,50 +29,78 @@ int main(int argc, const char *argv[])
         {
             case 'N': // if we're facing north, increase y position by value
                 yPos += value;
-                printf("Move north by %d\n", value);
+                printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                 break;
             case 'S': // if we're facing south, decrease y position by value
                 yPos -= value;
-                printf("Move south by %d\n", value);
+                printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                 break;
             case 'E': // if we're facing east, increase x position by value
                 xPos += value;
-                printf("Move east by %d\n", value);
+                printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                 break;
             case 'W': // if we're facing west, decrease x position by value
                 xPos -= value;
-                printf("Move west by %d\n", value);
+                printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                 break;
             case 'L': // increase theta by value (ferry facing in degrees)
                 theta += value;
                 if(theta < 0) theta += 360;
-                if(theta > 360) theta -= 360;
-                printf("Ferry now facing %d degrees\n", theta);
+                if(theta >= 360) theta -= 360;
+                switch(theta)
+                {
+                    case 0:
+                        printf("%c%d Facing east\n", currCh, value);
+                        break;
+                    case 90:
+                        printf("%c%d Facing north\n", currCh, value);
+                        break;
+                    case 180:
+                        printf("%c%d Facing west\n", currCh, value);
+                        break;
+                    case 270:
+                        printf("%c%d Facing south\n", currCh, value);
+                        break;
+                }
                 break;
             case 'R': // decrease theta by value (ferry facing in degrees)
                 theta -= value;
                 if(theta < 0) theta += 360;
-                if(theta > 360) theta -= 360;
-                printf("Ferry now facing %d degrees\n", theta);
+                if(theta >= 360) theta -= 360;
+                switch(theta)
+                {
+                    case 0:
+                        printf("%c%d Facing east\n", currCh, value);
+                        break;
+                    case 90:
+                        printf("%c%d Facing north\n", currCh, value);
+                        break;
+                    case 180:
+                        printf("%c%d Facing west\n", currCh, value);
+                        break;
+                    case 270:
+                        printf("%c%d Facing south\n", currCh, value);
+                        break;
+                }
                 break;
             case 'F':
                 switch(theta)
                 {
                 case 0:
                     xPos += value; // ferry moves east by value
-                    printf("Move east by %d\n", value);
+                    printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                     break;
                 case 90:
                     yPos += value; // ferry moves north by value
-                    printf("Move north by %d\n", value);
+                    printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                     break;
                 case 180:
                     xPos -= value; // ferry moves west by value
-                    printf("Move south by %d\n", value);
+                    printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                     break;
                 case 270:
                     yPos -= value; // ferry moves south by value
-                    printf("Move west by %d\n", value);
+                    printf("%c%d   (%d, %d)\n", currCh, value, xPos, yPos);
                     break;
                 }        
                 break;
