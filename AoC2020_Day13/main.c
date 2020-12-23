@@ -33,7 +33,7 @@ int compareTimeToWait(const void * a, const void * b)
     return (busA->timeToWait - busB->timeToWait);
 }
 
-// does what it says on the tin. takes in a file point
+// does what it says on the tin. takes in a file pointer
 // and counts the ids in the second line of the file.
 int countIdsInFile(FILE * input)
 {
