@@ -1,0 +1,22 @@
+mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0
+mask = XXXXXXXXXXXXXXXXXXXXXXXXX1XXX1X0XX0X
+mem[6] = 2
+mem[8] = 19
+mem[5] = 4
+mem[7] = 10
+
+[0] [1]  [2][3][4] [5][6]      }
+[8] [7]  [8][6][8] [5][7]      } <-- sort by this
+[11][101][0][2][19][4][10]     } <-- actually the processed values
+
+[5][3][1]  [6] [0] [2][4]      }
+[5][6][7]  [7] [8] [8][8]      } <-- remove structs with duplicate addresses
+[4][2][101][10][11][0][19]     }
+
+[5][3][6] [4]
+[5][6][7] [8]
+[4][2][10][19] } <-- (processed values, not the associated ones)
+

@@ -1,0 +1,38 @@
+elemSize = 8
+(0x0000 0x0008 0x0016 0x0024 0x0032)
+(A      A      B      D      D)
+
+barr -> 0x0000
+prev -> 0x0000
+
+i = 1
+    curr -> 0x0000 + 8 = 0x0008
+    if A == A v
+    prev -> 0x0000 + 8 = 0x0008
+    (0x0000 0x0008 0x0016 0x0024 0x0032)
+    (A      A      B      D      D)
+i = 2
+    curr -> 0x0008 + 8 = 0x0016
+    if B == A x
+        uniqueCount = 1
+        output -> 0x0000 + 1*8 = 0x0008
+        *0x0008 = B
+    prev -> 0x0008 + 8 = 0x0016
+    (0x0000 0x0008 0x0016 0x0024 0x0032)
+    (A      B      B      D      D)
+i = 3
+    curr -> 0x0016 + 8 = 0x0024
+    if D == B x
+        uniqueCount = 2
+        output -> 0x0000 + 2*9 = 0x0016
+        *0x0016 = D
+    prev -> 0x00016 + 8 = 0x0024
+    (0x0000 0x0008 0x0016 0x0024 0x0032)
+    (A      B      D      D      D)
+i = 4
+    curr -> 0x0024 + 8 = 0x0032
+    if D == D v
+    prev -> 0x0024 + 8 = 0x0032
+    (0x0000 0x0008 0x0016 0x0024 0x0032)
+    (A      B      D      xD      xD)
+return uniqueCount = 3

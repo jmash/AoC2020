@@ -1,0 +1,35 @@
+Day 14 Ideas:
+    Parse through input file, look for left brackets, count them up. This will be the size
+    of the address_to_check array.
+
+    Parse through input file, add all addresses to address_to_check array.
+
+    Create index position array
+
+    [8][7][8][9][20][6][8] <-- initial configuration of address_to_check array
+
+    [6][7][8][8][8][9][20] <-- qsort the address_to_check array
+    [0][1][2][3][4][5][6] <-- create associated array with consecutive integers; this will be the
+                  index position array
+    [6][7][8][8][8][9][20] <-- run through array until it reaches highest value (always check immediate right for equality)
+    [0][1][2][3][4][5][6]
+
+    [6][7][8]->[8][8][9][20] <-- check position to immediate right; if they are equal,
+    [0][1][2][3][4][5][6]
+
+    [6][7][8][8][8][9][20]
+    [0][1][2][2][3][4][5]    <-- subtract 1 from every array position starting at the index to the
+                              immediate right of the searched index (in this case, index position 3)
+    [6][7][8][8]->[8][9][20]
+    [0][1][2][2][3][4][5]
+
+    [6][7][8][8][8][9][20]   <-- subtract 1 from every array position starting at the index to the
+    [0][1][2][2][2][3][4]     immediate right of the searched index (in this case, index position 4)
+
+
+    [0][1][2][2][2][3]([4])  <-- 4 will be the number of structs to allocate memory for. now, when an address
+                                 is found, it will always associate with the same index no matter what. this
+                                 should overwrite values previously associated with the same address, which
+                                 should correspond to the idea of addresses zeroing out and getting overwritten
+                                 in the puzzle
+
