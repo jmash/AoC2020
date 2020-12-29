@@ -12,5 +12,6 @@ size_t countCharacterInFile(FILE * input, char ch);
 void printArray(void *array, size_t arraySize, size_t elemSize, void (*printfunc)(const void * a));
 void rewindFile(FILE * input);
 char peek(FILE * fp);
+int max(int a, int b);
 
 #endif

@@ -10,6 +10,11 @@ int cmpints(const void * a, const void * b)
     return *(int *)a - *(int *)b; 
 }
 
+size_t max(size_t a, size_t b)
+{
+    return a*(a >= b) + b*(a < b);
+}
+
 size_t countCharacterInFile(FILE * input, char ch)
 {
     int currCh; // CURRCH! :D :D :D
