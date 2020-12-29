@@ -1,67 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdint.h>
-#include <stdbool.h>
-#include <ctype.h>
+#include <string.h>
 #include "./aoc2020.h"
 
-#define BIT_MAX 36
+static const uint64_t ADDRESS_LEN=22;
+static const uint64_t ADDRESS_SPACE=(1ULL) << ADDRESS_LEN;
+static const uint64_t ADDRESS_MASK=ADDRESS_SPACE-1;
 
-typedef uint64_t address_t;
-typedef uint64_t value_t;
 typedef struct
 {
-    int64_t value;
-    size_t address;
-    size_t addressLoc;
-} line_info_t;
+    uint64_t clearbits;
+    uint64_t setbits;
+} mask_t;
 
-int cmpAddress_t (const void * a, const void * b) {
-   address_t av = *(const address_t*)a;
-   address_t bv = *(const address_t*)b;
-   if(av == bv) return 0;
-   else if(av < bv) return -1;
-   else return 1;
-}
-
-void printAddressArray(address_t * array, size_t arraySize)
+// (value | setbits) & ~clearbits
+uint64_t applyMask(const mask_t * mask, uint64_t value)
 {
-    for(size_t i = 0; i < arraySize; i++)
-    {
-        printf("[%ld]", array[i]);
-    }
-    printf("\n");
-}
-
-void populateAddresses(FILE * input, address_t * addresses)
-{
-    int currCh; // currCh now an int? it feels so wrong :(
-    int inx = 0;
-    while((currCh = fgetc(input)) != EOF)
-    {
-        if(currCh == '[')
-        {
-            fscanf(input, "%lu]", &addresses[inx]);
-            inx++;
-        }
-    }
-    rewindFile(input);
-}
-
-void printAddress(const void * address)
-{
-    printf("[%ld]", *(address_t *)address);
-}
-
-void printInt(const void * d)
-{
-    printf("%d", *(char *)d);
-}
-
-void printChar(const void * ch)
-{
-    printf("%c", *(char *)ch);
+   return (value | mask->setbits) & ~mask->clearbits; 
 }
 
 int64_t pow64T(size_t x, size_t y)
@@ -89,113 +45,126 @@ void valueToBinary(int64_t value, char * binaryArray, size_t arrayLength)
             i++;
         }
         binaryArray[arrayLength - i - 1] = 1;
-        printf("%ld\n", i);
         value -= base;
     }
 }
 
-// convert binary representation to decimal value
-int64_t binaryToValue(char * binaryArray, size_t arrayLength)
+size_t getGreatestMemoryAddress(FILE * input)
 {
-    int64_t total = 0;
-    for(size_t i = 0; i < arrayLength; i++)
+    char line[100];
+    size_t currAddress = 0;
+    size_t greatestAddress = 0;
+
+    while(fgets(line, 100, input) != NULL)
     {
-        if(binaryArray[arrayLength - i - 1])
+        if(sscanf(line, "mem[%lu]", &currAddress) == 1)
         {
-            total += pow64T(2, i);
+            greatestAddress = max(currAddress, greatestAddress); 
+        }
+    }
+
+    fseek(input, 0, SEEK_SET);
+
+    return greatestAddress;
+}
+
+mask_t parseMask(char maskString[37])
+{
+    //1 << Y;
+    mask_t parsedMask;
+    parsedMask.clearbits = 0;
+    parsedMask.setbits = 0;
+
+    for(size_t i = 0; i < 37; i++)
+    {
+        if(maskString[i] == '0')
+        {
+            parsedMask.clearbits += ((1ULL) << (35 - i));
+        }
+        if(maskString[i] == '1')
+        {
+            parsedMask.setbits += ((1ULL) << (35 - i));
         }
     }
     
-    return total;
+    return parsedMask;
 }
 
-void applyBitmask(char * bitMask, char * binaryArray, size_t arrayLength)
+int main(int argc, char * argv[])
 {
-    for(size_t i = 0; i < arrayLength; i++)
-    {
-        size_t revPos = arrayLength - i - 1;
-        if(bitMask[revPos] == 48) binaryArray[revPos] = 0;
-        if(bitMask[revPos] == 49) binaryArray[revPos] = 1;
-    }
-}
+    FILE * input = fopen("./input.txt", "r");
 
-// returns the address' associated index in the locations array. if no address
-// can be found, returns -1
-int32_t locateAddress(size_t address, size_t * addressLocs, size_t addressesLength)
-{
-    for(size_t i = 0; i < addressesLength; i++)
+    if(input == NULL)
     {
-        if(addressLocs[i] == address) return i; 
-    }
-
-    return -1;
-}
-
-int main(int argc, const char *argv[])
-{
-    if(argc < 2)
-    {
-        printf("Error: No input file specified.\n");
+        printf("Error: cannot open file.\n");
         return 1;
     }
-    FILE * input = fopen(argv[1], "r");
-    INPUT_NULL_CHECK; // make sure the input file actually works
+    size_t greatestAddress = getGreatestMemoryAddress(input);
+    uint64_t * memory = malloc(sizeof(uint64_t)*greatestAddress);
+    memset(memory, 0, sizeof(uint64_t)*greatestAddress);
+    
+    char line[100];
+    char mask[37];
+    char binaryArray[36];
 
-    char currCh; // join the CURRCH
-    char compWord[50]; // word to compare against the scanned-in word
-    char currBitmask[BIT_MAX+1]; // bitmask is always 36 characters (+1 for null terminator)
-    char bitValue[BIT_MAX];
-    memset(currBitmask, 'X', BIT_MAX*sizeof(char)); // default mask for first pass
-    memset(bitValue, 0, BIT_MAX*sizeof(char)); // default mask for first pass
-    size_t numAddresses = countCharacterInFile(input, '[');
-    printf("%lu\n", numAddresses);
-    line_info_t lines[numAddresses];
+    uint64_t total = 0;
+    mask_t currMask;
 
-//    valueToBinary(51, bitValue, BIT_MAX);
-//    strcpy(currBitmask, "X1XXXXXXXX1XXXXXX1XXXXXXXXXXXXXX0000");
- //   applyBitmask(currBitmask, bitValue, BIT_MAX); 
-
-    while((currCh = fgetc(input)) != EOF)
+    while(fgets(line, 100, input) != NULL)
     {
-        if(currCh == 'm')
+        memset(binaryArray, 0, sizeof(char)*37);
+        uint64_t addr, value;
+        if(sscanf(line, "mem[%lu] = %lu", &addr, &value) == 2)
         {
-            if(peek(input) == 'e')
+            valueToBinary(value, binaryArray, 36);
+            for(size_t i = 0; i < 36; i++)
             {
-                fseek(input, 3, SEEK_CUR);
-                //fscanf(input, "%lu", &addresses[numAddresses]);
-                //printf("%lu\n", addresses[numAddresses]);
-                fseek(input, 4, SEEK_CUR);
-                
+                printf("%d", binaryArray[i]);
             }
+            printf("\n");
+            for(size_t i = 0; i < 37; i++)
+            {
+                printf("%c", mask[i]);
+            }
+            printf("\n");
+            memset(binaryArray, 0, sizeof(char)*37);
+            valueToBinary(currMask.setbits, binaryArray, 36);
+            printf("setbits:\n");
+            for(size_t i = 0; i < 36; i++)
+            {
+                printf("%d", binaryArray[i]);
+            }
+            printf("\n");
+            memset(binaryArray, 0, sizeof(char)*37);
+            valueToBinary(currMask.clearbits, binaryArray, 36);
+            printf("clearbits:\n");
+            for(size_t i = 0; i < 36; i++)
+            {
+                printf("%d", binaryArray[i]);
+            }
+            printf("\n");
+            memory[addr] = applyMask(&currMask, value);
+            memset(binaryArray, 0, sizeof(char)*37);
+            valueToBinary(applyMask(&currMask, value), binaryArray, 36);
+            for(size_t i = 0; i < 36; i++)
+            {
+                printf("%d", binaryArray[i]);
+            }
+            printf("\n");
+            printf("%lu\n", applyMask(&currMask, value));
+        } else if(sscanf(line, "mask = %s", mask) == 1)
+        {
+            currMask = parseMask(mask);
         }
     }
+   
     
-
-    fclose(input); // STOP FORGETTING
-    return 0;
-}
-
-
-//   [7][8]
-//   [0][1]
-
-// IN MEMORIAM REQUIESCAT IN PACE
-//
-/*size_t removeDuplicatesFromArray(int * array, size_t arraySize)
-{ 
-    qsort(array, arraySize, sizeof(int), cmpints);
-    int * noDuplicates;
-    noDuplicates = array;
-    noDuplicates[0] = array[0];
-    unsigned int uniqueCount = 0;
-    for(int i = 1; i < arraySize; i++)
+    for(uint64_t i = 0; i < greatestAddress; i++)
     {
-       // check if prev element is a dupe
-       if(array[i-1] != array[i])
-       {
-           uniqueCount++;
-           noDuplicates[uniqueCount] = array[i];
-       }
+        total += memory[i]; 
     }
-    return ++uniqueCount;
-}*/
+    printf("%lu\n", total);
+     
+
+    free(memory);
+}
