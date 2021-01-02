@@ -1,0 +1,154 @@
+THE WISDOM
+----------
+Remember all the stuff you did with remove dupes?
+You know that only some addresses are used
+so you need to
+    * iterate through all the addresses that get used and append them to a huge array
+        - remember to reset xbits on every pass xbits | ~xbits
+    * remove dupes
+    * then that array is a mapping from the sparse huge addresses to the dense address set that is actually used
+    * and you can use bsearch to find the spot given an address
+
+it's sort of like a low-rent hashtable kindof
+like, in javascript you'd just use a hashtable
+memory[addr]=value
+and it would be fine because hashtable
+in this case however you're really inventing a 'desparsifying" hash table
+where you are doing
+like
+memory[mapping.indexOf(addr)]=value
+where mapping is the 'desparsifer'
+and indexOf is bsearch
+
+  234512
+  200000+30000+4000+500+10+2
+  2*10^5+3*10^4+4*10^3+5*10^2+1*10^1+2*10^0
+  (234512 % 10)/1 = 2
+  (234512 % 100)/10 = 1
+  (234512 % 1000)/100 = 5
+  (234512 % 10000)/1000 = 4
+  (x % 10^(i+1))/10^i
+
+  0xb00101101
+  x += (binaryArray[arrayLength-i-1] << i)
+  i = 0 -> x += 1 => 1
+  i = 1 -> x += 0 => 1
+  i = 2 -> x += 4 => 5
+  i = 3 -> x += 8 => 13
+  i = 4 -> x += 0 => 13
+  i = 5 -> x += 32 => 45
+  i = 6 -> x += 0 => 45
+  i = 7 -> x += 0 => 45
+
+  12 SRC1
+  43 SRC2 (MASK)
+  40 DEST
+  000000000000000000000000000000001100 12
+  000000000000000000000000000000X0X0XX 43
+  000000000000000000000000000000101000 40
+
+// 100100 + 10^4 (10000)
+// 110100
+// 100100 + 2^4 (16) -> (10000)
+// 110100
+
+// mask = 000000000000000000000000000000X0X0XX
+//        X0X0XX
+//        000000 0
+//        000001 1
+//        000010 2
+//        000011 3
+//        001000 8
+//        001001 9
+//        001010 10
+//        001011 11
+//        100000 32
+//        100001 33
+//        100010 34
+//        100011 35
+//        101000 40
+//        101001 41
+//        101010 42
+//        101011 43
+//func dump
+/*
+size_t getGreatestMemoryAddress(FILE * input)
+{
+    char line[100];
+    size_t currAddress = 0;
+    size_t greatestAddress = 0;
+
+    while(fgets(line, 100, input) != NULL)
+    {
+        if(sscanf(line, "mem[%lu]", &currAddress) == 1)
+        {
+            greatestAddress = max(currAddress, greatestAddress);
+        }
+    }
+
+    fseek(input, 0, SEEK_SET);
+
+    return greatestAddress;
+}
+
+
+PDEP implemenation pattern (this is what we're supposed to use PDEP to do):
+
+    000000000000000000000000000000000000
+    000000000000000000000000000000X0X0XX
+    000000000000000000000000000000000000 0
+
+    000000000000000000000000000000000001
+    000000000000000000000000000000X0X0XX
+    000000000000000000000000000000000001 1
+
+
+Here's a worked example:
+
+mask=101XX0
+mem[3]=50
+mem[15]=25
+
+first pass, we do the address count:
+
+cur_num_xs=2
+addrlength=0
+//mem[3]=50
+addrlength+=4   (
+addrlength+=4
+
+addresses=malloc(addrlength)
+
+addresses....[0 0 0 0 0 0 0 0]
+
+//now we go through each address..
+
+first one, 3:
+//mask gets applied to 3 four times:
+
+//addr[acount++]=maskfunc(3,0,101XX0)  //101001 41
+//addr[acount++]=maskfunc(3,1,101XX0)  //101011 43
+//addr[acount++]=maskfunc(3,2,101XX0)  //101101 45
+//addr[acount++]=maskfunc(3,3,101XX0)  //101111 49
+
+addresses=[41 43 45 49
+next one 15:
+
+//addr[acount++]=maskfunc(15,0,101XX0)  //101001 41
+//addr[acount++]=maskfunc(15,1,101XX0)  //101011 43
+//addr[acount++]=maskfunc(15,2,101XX0)  //101101 45
+//addr[acount++]=maskfunc(15,3,101XX0)  //101111 49
+
+acount==8
+
+addresses=[41 43 45 49 41 43 45 49]
+
+newcount=remove_duplicates(addresses)
+
+addresses=[41 43 45 49], K=4
+
+memory=malloc(K)
+
+So now we go through again:
+memory[3]=50
+addr=maskfunc(3,0,101XX0)  //101001 41

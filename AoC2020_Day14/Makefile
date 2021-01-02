@@ -9,9 +9,9 @@ test: main
 solution: main 
 	./main ./input.txt
 main2: main2.o
-	cc main2.o -o main2
+	cc main2.o -o main2 -L. -laoc2020
 test2: main2
-	./main2 ./testinput.txt
+	./main2 ./testinput4.txt
 solution2: main2
 	./main2 ./input.txt
 debug: main2
