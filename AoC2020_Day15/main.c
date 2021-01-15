@@ -35,9 +35,8 @@ int main(int argc, const char *argv[])
         return 1;
     }
     FILE * input = fopen(argv[1], "r");
-    INPUT_NULL_CHECK;
 
-    size_t numCommas = countCharacterInFile(input, ',');
+    size_t numCommas = count_character_in_file(input, ',');
 
     uint64_t * ages = malloc(sizeof(uint64_t)*MAX_LENGTH);
     int currTurn = numCommas+1;

@@ -15,7 +15,7 @@ size_t max(size_t a, size_t b)
     return a*(a >= b) + b*(a < b);
 }
 
-size_t countCharacterInFile(FILE * input, char ch)
+size_t count_character_in_file(FILE * input, char ch)
 {
     int currCh; // CURRCH! :D :D :D
     size_t chCount = 0;
@@ -53,7 +53,7 @@ size_t removeDupes(void * array, size_t arraySize, size_t elemSize, int(*cmpfunc
 }
 
 
-void printArray(void *array, size_t arraySize, size_t elemSize, void (*printfunc)(const void * a))
+void print_array(void *array, size_t arraySize, size_t elemSize, void (*printfunc)(const void * a))
 {
     uint8_t * barr = (uint8_t *) array;
     for(size_t i = 0; i < arraySize; i++)
