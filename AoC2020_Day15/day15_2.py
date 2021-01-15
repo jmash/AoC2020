@@ -1,12 +1,12 @@
-MAX_LENGTH = 30000000
-#MAX_LENGTH = 2020
+#MAX_LENGTH = 30000000
+MAX_LENGTH = 2020
 #MAX_LENGTH = 10
 
-finput = open("./input.txt", "r")
+finput = open("./testinput.txt", "r")
 
 # count commas
 comma_count = 0
-with open("./input.txt", "r") as f:
+with open("./testinput.txt", "r") as f:
     comma_count = f.read().count(',')
 
 readfile = finput.read().strip()
@@ -28,7 +28,6 @@ for i in range(1, MAX_LENGTH-comma_count):
             agedict[int(num)] = (agedict[int(num)][0], agedict[int(num)][0])
             num = 0
         else:
-            agedict[int(num)] = (agedict[int(num)][0], agedict[int(num)][0])
             cur_inx += 1
             agedict[int(num)] = (cur_inx, agedict[int(num)][0])
             num = agedict[int(num)][0] - agedict[int(num)][1]

@@ -75,3 +75,13 @@ void rewindFile(FILE * input)
 {
     fseek(input, 0, SEEK_SET);
 }
+
+int is_file_valid(FILE * input)
+{
+    if(input == NULL)
+    {
+        printf("Error opening file; aborting.\n");
+        return 0;
+    }
+    return 1;
+}

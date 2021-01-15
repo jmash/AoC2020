@@ -50,9 +50,6 @@ node_t * hash_table_lookup(int age, node_t ** hash_table)
         tmp = tmp->next;
     }
     return tmp;
-    /*if(tmp) return &(tmp->pos);
-    else return NULL;
-    */
 }
 
 
@@ -99,12 +96,13 @@ int main(int argc, const char *argv[])
         return 1;
     }
     FILE * input = fopen(argv[1], "r");
-    INPUT_NULL_CHECK;
+    if(!is_file_valid(input))
+    {
+        return -1;
+    }
 
     node_t ** hash_table = malloc(sizeof(node_t)*MAX_LENGTH); 
-    
-
-    
+     
     char currCh;
     size_t curr_age = 0;
     size_t curr_inx = 1;
@@ -124,11 +122,8 @@ int main(int argc, const char *argv[])
 
     for(size_t i = curr_inx-1; i < MAX_LENGTH; i++)
     {
-        // TODO: check if current age is in the ages hashtable
         node_t * lookup = hash_table_lookup(curr_age, hash_table);
         node_t * lookup_next = lookup->next;
-        // if the specified age can't be found previously,
-        // insert a node of age 0
         if(lookup != NULL)
         {
             if(!lookup->next)
@@ -147,12 +142,6 @@ int main(int argc, const char *argv[])
         } 
     } 
      
-    /*
-    // run through remainder of ages up to max
-    */
- 
-    //print_hash_table(hash_table);
-    printf("%lu\n", curr_age);
     
     hash_table_deinit(hash_table);
     return 0;
