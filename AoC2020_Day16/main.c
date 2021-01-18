@@ -77,7 +77,7 @@ void load_in_valid_values(FILE * input, int * valid_values)
         {
             ungetc(currCh, input);
             fscanf(input, "%s:", check_your);
-            if(strcmp(check_your, "your ticket"))
+            if(strcmp(check_your, "your") == 0)
             {
                 break;
             }
@@ -115,7 +115,7 @@ int get_error_rate(FILE * input, int * valid_values, size_t valid_size)
         {
             ungetc(currCh, input);
             fscanf(input, "%s:", check_nearby);
-            if(strcmp(check_nearby, "nearby tickets"))
+            if(strcmp(check_nearby, "nearby") == 0)
             {
                 nearby_vals_flag = true;
             }

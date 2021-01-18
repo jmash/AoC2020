@@ -1,7 +1,27 @@
 3       9      18
 15      1       5
 5       14      9
-                Seat
-        Class
-Row
+1Class  1Class 1Class
+1Row    1Row   1Row
+1Seat   1Seat  1Seat
+
+3       9      18
+15      1       5
+5       14      9
+1Class  1Class 1Class
+1Row    0Row   0Row
+1Seat   1Seat  1Seat
+
+3       9      18
+15      1       5
+5       14      9
+0Class  1Class 0Class
+1Row    0Row   0Row
+0Seat   0Seat  1Seat
+
+Class Row Seat
+1: Class->0 Row->1 Seat->0
+2: Class->1 Row->0 Seat->0
+3: Class->0 Row->0 Seat->1
+
 

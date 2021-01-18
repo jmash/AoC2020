@@ -1,0 +1,24 @@
+
+Steve132_2: it might be something like linear programming or knapsack
+Steve132_2: no
+Steve132_2: this might actually be easier than that
+Steve132_2: all you have to do is for each field
+Steve132_2: find the rule that returns true for every single one
+Steve132_2: seems easiy now
+Steve132_2: it doesn't
+Steve132_2: but you could solve it like sudoku anyway
+Steve132_2: so, like, for each position, see if you can solve it
+Steve132_2: this is brute force but it depends how big your input is
+Steve132_2: So,first, go through each position and for each one compute theset of possible classes
+Steve132_2: that's the first part
+Steve132_2: That's fast
+Steve132_2: then after that you could try just being greedy
+Steve132_2: like, after that its an assignment problem which is hard but you might get it by being greedy
+Steve132_2: so
+Steve132_2: basically you want to get a mapping between class and possible label
+Steve132_2: first
+Steve132_2: then, assign all the classes where it's 100% certain
+Steve132_2: and remove those labels from all the other classes
+Steve132_2: you know?
+Steve132_2: you might want to make the possible lable the key
+Steve132_2: and a sorted array of classes the values

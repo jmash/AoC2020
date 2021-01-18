@@ -63,6 +63,18 @@ void print_array(void *array, size_t arraySize, size_t elemSize, void (*printfun
     }
 }
 
+int get_largest_int_from_array(void * array, size_t array_size)
+{
+    int * barr = (int *) array;
+    int max_int = 0;
+    for(size_t i = 0; i < array_size; i++)
+    {
+        max_int = max(max_int, barr[i]);
+    }
+
+    return max_int;
+}
+
 char peek(FILE * fp)
 {
     char ch;
