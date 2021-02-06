@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-size_t removeDupes(void * array, size_t arraySize, size_t elemSize, int(*cmpfunc)(const void * a, const void * b));
+size_t remove_dupes(void * array, size_t arraySize, size_t elemSize, int(*cmpfunc)(const void * a, const void * b));
 
 int cmpints(const void * a, const void * b)
 {

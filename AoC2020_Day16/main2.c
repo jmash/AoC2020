@@ -6,7 +6,7 @@
 #include "aoc2020.h"
 
 typedef struct {
-    int ticket_pos;
+    int * range;
     char * field;
 } position_t;
 
@@ -205,49 +205,46 @@ void load_in_valid_values(FILE * input, int * valid_values)
     fseek(input, 0, SEEK_SET);
 }
 
-int get_error_rate(FILE * input, int * valid_values, size_t valid_size)
-{
+load_in_valid_range(FILE * input, int * valid_values_range, size_t row)
+{  
     char currCh;
-    bool nearby_vals_flag = false;    
-    char check_nearby[15];
-    int cur_nearby_val = 0;
-    int error_rate = 0;
-
+    char check_your[12];
+    size_t cur_inx = 0;
+    int low_range_1 = 0;
+    int high_range_1 = 0;
+    int low_range_2 = 0;
+    int high_range_2 = 0;
     while((currCh = fgetc(input)) != EOF)
     {
-        if(currCh == 'n')
+        if(currCh == 'y')
         {
             ungetc(currCh, input);
-            fscanf(input, "%s:", check_nearby);
-            if(strcmp(check_nearby, "nearby tickets"))
+            fscanf(input, "%s:", check_your);
+            if(strcmp(check_your, "your ticket"))
             {
-                nearby_vals_flag = true;
+                break;
             }
         }
-        if(nearby_vals_flag)
+        if(isdigit(currCh))
         {
-            if(isdigit(currCh))
+            ungetc(currCh, input);
+            fscanf(input, "%d-%d or %d-%d", &low_range_1, &high_range_1, &low_range_2, &high_range_2);
+            for(int i = low_range_1; i <= high_range_1; i++)
             {
-                ungetc(currCh, input);
-                fscanf(input, "%d", &cur_nearby_val);
-                int * search_result = bsearch(&cur_nearby_val, valid_values, valid_size, sizeof(int), cmp_ints); 
-                if(search_result != NULL)
-                {
-                    printf("%d\n", *(search_result));
-                }
-                else
-                {
-                    printf("not found\n");
-                    error_rate += cur_nearby_val;
-                }
+                valid_values_col[cur_inx] = i;
+                cur_inx++;
             }
-        }
+            for(int i = low_range_2; i <= high_range_2; i++)
+            {
+                valid_values_col[cur_inx] = i;
+                cur_inx++;
+            }
+        } 
     }
 
     fseek(input, 0, SEEK_SET);
-
-    return error_rate;
 }
+
 
 void load_in_values_table(FILE * input, int ** values_table, size_t row_count, size_t col_count)
 {
@@ -337,12 +334,10 @@ int main(int argc, const char *argv[])
         memset(fields[i], 1, sizeof(bool)*col_count); 
     }
     
-    size_t largest_value = get_largest_value(input);
-    int * valid_values = (int *)malloc(sizeof(int) * largest_value);
-    load_in_valid_values(input, valid_values);
-    print_array(valid_values, largest_value, sizeof(int), print_int);
-    // TODO: remove duplicates from ^ the valid values array
-    printf("\n");
+    size_t fields_count = get_fields_count(FILE * input);
+    position_t * positions = (position_t *)malloc(sizeof(position_t)*fields_count);
+
+    
 
     return 0;
 }
